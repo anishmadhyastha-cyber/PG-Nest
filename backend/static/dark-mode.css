@@ -1,0 +1,358 @@
+/* ============================================================
+   PGNest — Dark Room (Dark Mode) Theme
+   Properly overrides all CSS variables and hard-coded colors
+   ============================================================ */
+
+body.dark-mode {
+    /* Core palette overrides */
+    --bg-light:   #111318;
+    --bg-white:   #1a1d24;
+    --text-main:  #e2e6f0;
+    --text-muted: #7a8499;
+    --border-color: #2a2f3d;
+    --secondary: #dde3f0;
+    --secondary-hover: #c5cce0;
+    --shadow-soft:   0 10px 30px rgba(0,0,0,0.4);
+    --shadow-medium: 0 15px 40px rgba(0,0,0,0.5);
+
+    background-color: var(--bg-light);
+    color: var(--text-main);
+}
+
+/* ---- Header ---- */
+body.dark-mode .app-header {
+    background-color: #13151c;
+    border-bottom-color: var(--border-color);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.4);
+}
+
+body.dark-mode .logo-text {
+    color: var(--text-main);
+}
+
+body.dark-mode .nav-link {
+    color: var(--text-muted);
+}
+
+body.dark-mode .nav-link:hover,
+body.dark-mode .nav-link.active {
+    color: var(--primary);
+}
+
+/* ---- Hero ---- */
+body.dark-mode .hero-section {
+    background: linear-gradient(135deg, #0f1117 0%, #161b28 100%);
+}
+
+body.dark-mode .hero-title {
+    color: var(--text-main);
+}
+
+body.dark-mode .hero-subtitle {
+    color: var(--text-muted);
+}
+
+body.dark-mode .hero-badge-item {
+    color: var(--text-muted);
+}
+
+/* ---- Features ---- */
+body.dark-mode .features-section {
+    background-color: #13151c;
+    border-top-color: var(--border-color);
+}
+
+body.dark-mode .features-header h2,
+body.dark-mode h1, body.dark-mode h2,
+body.dark-mode h3, body.dark-mode h4 {
+    color: var(--text-main);
+}
+
+body.dark-mode .feature-card {
+    background-color: var(--bg-white);
+    border-color: var(--border-color);
+}
+
+body.dark-mode .feature-card p {
+    color: var(--text-muted);
+}
+
+body.dark-mode .feature-card:hover {
+    border-color: var(--primary);
+}
+
+/* ---- Buttons ---- */
+body.dark-mode .btn-outline {
+    border-color: #3a4055;
+    color: var(--text-main);
+}
+
+body.dark-mode .btn-outline:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+}
+
+body.dark-mode .btn-secondary {
+    background-color: #2a2f3d;
+    color: var(--text-main);
+}
+
+body.dark-mode .btn-secondary:hover {
+    background-color: #363c50;
+}
+
+/* ---- Wizard Modal ---- */
+body.dark-mode .modal-container {
+    background-color: #1a1d24;
+    border: 1px solid var(--border-color);
+}
+
+body.dark-mode .modal-header {
+    border-bottom-color: var(--border-color);
+}
+
+body.dark-mode .modal-header h2,
+body.dark-mode .wizard-title-block h2 {
+    color: var(--text-main);
+}
+
+body.dark-mode .wizard-subtitle {
+    color: var(--text-muted);
+}
+
+body.dark-mode .wizard-footer {
+    border-top-color: var(--border-color);
+}
+
+body.dark-mode .step-num {
+    background-color: #252933;
+    border-color: #3a4055;
+    color: var(--text-muted);
+}
+
+body.dark-mode .step-text {
+    color: var(--text-muted);
+}
+
+body.dark-mode .progress-line {
+    background-color: var(--border-color);
+}
+
+body.dark-mode .form-group label {
+    color: var(--text-muted);
+}
+
+body.dark-mode .form-group select {
+    background-color: #252933;
+    border-color: var(--border-color);
+    color: var(--text-main);
+}
+
+body.dark-mode .form-group select:focus {
+    border-color: var(--primary);
+}
+
+body.dark-mode .step-instruction {
+    color: var(--text-muted);
+}
+
+body.dark-mode .priority-rating-item {
+    background-color: #252933;
+    border-color: var(--border-color);
+}
+
+body.dark-mode .rating-title {
+    color: var(--text-main);
+}
+
+body.dark-mode .amenity-card-content {
+    background-color: #252933;
+    border-color: var(--border-color);
+}
+
+body.dark-mode .amenity-card-content span {
+    color: var(--text-main);
+}
+
+/* ---- Analytics ---- */
+body.dark-mode .section-header {
+    border-bottom-color: var(--border-color);
+}
+
+body.dark-mode .section-header p {
+    color: var(--text-muted);
+}
+
+body.dark-mode .stat-card {
+    background-color: var(--bg-white);
+    border-color: var(--border-color);
+}
+
+body.dark-mode .stat-value {
+    color: var(--text-main);
+}
+
+body.dark-mode .stat-label {
+    color: var(--text-muted);
+}
+
+body.dark-mode .chart-card {
+    background-color: var(--bg-white);
+    border-color: var(--border-color);
+}
+
+body.dark-mode .chart-card h3 {
+    color: var(--text-main);
+}
+
+/* ---- Recommender ---- */
+body.dark-mode .priority-summary-banner {
+    background-color: var(--bg-white);
+    border-color: var(--border-color);
+}
+
+body.dark-mode .summary-tag {
+    background-color: rgba(255,255,255,0.06);
+    color: var(--text-muted);
+}
+
+body.dark-mode .results-header {
+    border-bottom-color: var(--border-color);
+}
+
+body.dark-mode .results-title {
+    color: var(--text-main);
+}
+
+body.dark-mode .results-subtitle {
+    color: var(--text-muted);
+}
+
+body.dark-mode .alg-mini-tabs {
+    background-color: rgba(255,255,255,0.05);
+}
+
+body.dark-mode .alg-mini-tab.active {
+    background-color: #2a2f3d;
+    color: var(--primary);
+}
+
+body.dark-mode .toggle-label {
+    color: var(--text-muted);
+}
+
+/* ---- PG Cards ---- */
+body.dark-mode .pg-card {
+    background-color: var(--bg-white);
+    border-color: var(--border-color);
+}
+
+body.dark-mode .card-pg-name {
+    color: var(--text-main);
+}
+
+body.dark-mode .card-pg-address {
+    color: var(--text-muted);
+}
+
+body.dark-mode .card-specs-row {
+    border-bottom-color: var(--border-color);
+}
+
+body.dark-mode .spec-item {
+    color: var(--text-muted);
+}
+
+body.dark-mode .breakdown-label {
+    color: var(--text-main);
+}
+
+body.dark-mode .breakdown-bar-bg {
+    background-color: #2a2f3d;
+}
+
+body.dark-mode .breakdown-title {
+    color: var(--text-muted);
+}
+
+body.dark-mode .loading-state,
+body.dark-mode .empty-state {
+    background-color: var(--bg-white);
+    border-color: var(--border-color);
+}
+
+body.dark-mode .empty-state h3 {
+    color: var(--text-main);
+}
+
+/* ---- Compare Drawer (already dark, minor tweak) ---- */
+body.dark-mode .compare-drawer {
+    background-color: #0f1117;
+}
+
+/* ---- Compare / Details Modals ---- */
+body.dark-mode .compare-table th {
+    background-color: #252933;
+    color: var(--text-main);
+}
+
+body.dark-mode .compare-table td {
+    color: var(--text-main);
+}
+
+body.dark-mode .compare-table th,
+body.dark-mode .compare-table td {
+    border-bottom-color: var(--border-color);
+}
+
+body.dark-mode .compare-title-bold {
+    color: var(--text-main);
+}
+
+body.dark-mode .details-meta-list {
+    background-color: #252933;
+    border-color: var(--border-color);
+}
+
+body.dark-mode .details-meta-item strong {
+    color: var(--text-main);
+}
+
+/* ---- Methodology Cards ---- */
+body.dark-mode .methodology-card {
+    background-color: var(--bg-white);
+    border-color: var(--border-color);
+}
+
+body.dark-mode .methodology-card-header {
+    border-bottom-color: var(--border-color);
+}
+
+body.dark-mode .methodology-card p,
+body.dark-mode .methodology-card li {
+    color: var(--text-muted);
+}
+
+body.dark-mode .formula-list {
+    background-color: #252933;
+    border-color: var(--border-color);
+}
+
+/* ---- Footer ---- */
+body.dark-mode .app-footer {
+    background-color: #0b0d13;
+    border-top-color: var(--border-color);
+}
+
+/* ---- Moon/Sun icon toggle ---- */
+body.dark-mode #btn-dark-room i[data-lucide="moon"] {
+    display: none;
+}
+
+#btn-dark-room i[data-lucide="sun"] {
+    display: none;
+}
+
+body.dark-mode #btn-dark-room i[data-lucide="sun"] {
+    display: inline;
+}

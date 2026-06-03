@@ -1,15 +1,26 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, RedirectResponse, Response
 from pydantic import BaseModel
 import pandas as pd
 import numpy as np
 import os
+import json
+from urllib.parse import urlencode
+from urllib.request import Request, urlopen
+import re
+from urllib.parse import quote
+import requests
+from fastapi.responses import RedirectResponse
 
 app = FastAPI(title="Smart Accommodation Recommender API")
 
+place_photo_cache = {}
+
 # Path to the data file
 DATA_PATH = os.path.join(os.path.dirname(__file__), "../data.csv")
+if not os.path.exists(DATA_PATH):
+    DATA_PATH = os.path.join(os.path.dirname(__file__), "data.csv")
 
 # Load and preprocess dataset
 if not os.path.exists(DATA_PATH):
@@ -41,6 +52,11 @@ def infer_gender(pg_id, pg_name):
 
 df['gender'] = df.apply(lambda row: infer_gender(row['pg_id'], row['pg_name']), axis=1)
 
+# Use local image path if available
+if 'local_image_path' in df.columns:
+    df['photo_url'] = df['local_image_path']
+else:
+    df['photo_url'] = None
 # Ensure rating columns are numeric
 rating_cols = ['locality_safety_rating', 'landlord_responsiveness_rating', 'food_rating', 'overall_student_rating']
 for col in rating_cols:
@@ -52,6 +68,9 @@ df['security_deposit'] = pd.to_numeric(df['security_deposit'], errors='coerce').
 df['distance_to_bmsit_km'] = pd.to_numeric(df['distance_to_bmsit_km'], errors='coerce').fillna(5.0)
 df['distance_to_bus_stop_km'] = pd.to_numeric(df['distance_to_bus_stop_km'], errors='coerce').fillna(1.0)
 df['distance_to_metro_km'] = pd.to_numeric(df['distance_to_metro_km'], errors='coerce').fillna(5.0)
+
+# Fix JSON serialization issue for NaN values
+df = df.replace({np.nan: None})
 
 # Global min/max values for WSM normalization
 rent_min = float(df['monthly_rent'].min())
@@ -82,6 +101,56 @@ class RecommendationRequest(BaseModel):
     preferences: StudentPreferences
     weights: PreferenceWeights
     algorithm: str = "wsm" # "wsm" or "topsis"
+
+@app.get("/api/place-photo/{place_id}")
+def get_place_photo(place_id: str):
+    """Proxy the first Google Places photo for a place_id without exposing the API key."""
+    api_key = os.environ.get("GOOGLE_MAPS_API_KEY", "").strip()
+    if not api_key:
+        return RedirectResponse(url="/static/images/double.png")
+
+    if place_id in place_photo_cache:
+        cached = place_photo_cache[place_id]
+        return Response(content=cached["content"], media_type=cached["media_type"])
+
+    details_params = urlencode({
+        "place_id": place_id,
+        "fields": "photos",
+        "key": api_key
+    })
+    details_url = f"https://maps.googleapis.com/maps/api/place/details/json?{details_params}"
+
+    try:
+        details_req = Request(details_url, headers={"User-Agent": "PGNest/1.0"})
+        with urlopen(details_req, timeout=15) as details_response:
+            details = json.loads(details_response.read().decode("utf-8"))
+
+        photos = details.get("result", {}).get("photos", [])
+        if not photos:
+            return RedirectResponse(url="/static/images/double.png")
+
+        photo_reference = photos[0].get("photo_reference")
+        if not photo_reference:
+            return RedirectResponse(url="/static/images/double.png")
+
+        photo_params = urlencode({
+            "maxwidth": 900,
+            "photo_reference": photo_reference,
+            "key": api_key
+        })
+        photo_url = f"https://maps.googleapis.com/maps/api/place/photo?{photo_params}"
+        photo_req = Request(photo_url, headers={"User-Agent": "PGNest/1.0"})
+        with urlopen(photo_req, timeout=20) as photo_response:
+            content = photo_response.read()
+            media_type = photo_response.headers.get_content_type() or "image/jpeg"
+
+        place_photo_cache[place_id] = {
+            "content": content,
+            "media_type": media_type
+        }
+        return Response(content=content, media_type=media_type)
+    except Exception:
+        return RedirectResponse(url="/static/images/double.png")
 
 @app.get("/api/stats")
 def get_stats():
@@ -293,6 +362,7 @@ def recommend_pgs(req: RecommendationRequest):
     # Sort results in descending order of score
     results = sorted(results, key=lambda x: x['score'], reverse=True)
     return results
+
 
 # Serve Frontend static files
 STATIC_DIR = os.path.join(os.path.dirname(__file__), "static")

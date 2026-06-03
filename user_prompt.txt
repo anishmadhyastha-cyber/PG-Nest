@@ -1,0 +1,132 @@
+<USER_REQUEST>
+## Integrate the <ColorBends /> component from React Bits
+
+You are helping integrate an open-source React component into an existing application.
+
+### Component: ColorBends
+### Variant: JavaScript + CSS
+### Dependencies: three
+
+---
+
+### Usage Example
+```jsx
+import ColorBends from './ColorBends';
+  
+<ColorBends
+  colors={["#ff5c7a", "#8a5cff", "#00ffd1"]}
+  rotation={90}
+  speed={0.2}
+  scale={1}
+  frequency={1}
+  warpStrength={1}
+  mouseInfluence={1}
+  noise={0.15}
+  parallax={0.5}
+  iterations={1}
+  intensity={1.5}
+  bandWidth={6}
+  transparent
+/>
+```
+
+### Props
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| rotation | number | 90 | Base rotation angle in degrees. |
+| autoRotate | number | 0 | Automatic rotation speed in degrees/sec. |
+| speed | number | 0.2 | Animation time scale of the shader. |
+| colors | string[] | [] | Palette of up to 8 hex colors used to blend the bends. |
+| transparent | boolean | true | Whether the background is transparent (uses alpha). |
+| scale | number | 1 | Zoom factor of the pattern. |
+| frequency | number | 1 | Wave frequency used in the pattern. |
+| warpStrength | number | 1 | Amount of warping/distortion applied to waves. |
+| mouseInfluence | number | 1 | How strongly the waves react to pointer movement. |
+| parallax | number | 0.5 | Parallax factor shifting content with pointer. |
+| noise | number | 0.15 | Adds subtle grain. 0 disables noise. |
+| iterations | number | 1 | Number of extra warp passes (1-5). Higher values create more complex patterns. |
+| intensity | number | 1.5 | Brightness multiplier for the final color output. |
+| bandWidth | number | 6 | Controls the width/falloff of each color band. |
+| className | string | '' | Additional CSS classes for the container. |
+| style | React.CSSProperties | {} | Inline styles for the container. |
+
+### Full Component Source
+```jsx
+import { useEffect, useRef } from 'react';
+import * as THREE from 'three';
+import './ColorBends.css';
+
+const MAX_COLORS = 8;
+
+const frag = `
+#define M
+<truncated 9306 bytes>
+forms.uColorCount.value = arr.length;
+
+    material.uniforms.uTransparent.value = transparent ? 1 : 0;
+    if (renderer) renderer.setClearColor(0x000000, transparent ? 0 : 1);
+  }, [
+    rotation,
+    autoRotate,
+    speed,
+    scale,
+    frequency,
+    warpStrength,
+    mouseInfluence,
+    parallax,
+    noise,
+    iterations,
+    intensity,
+    bandWidth,
+    colors,
+    transparent
+  ]);
+
+  useEffect(() => {
+    const material = materialRef.current;
+    const container = containerRef.current;
+    if (!material || !container) return;
+
+    const handlePointerMove = e => {
+      const rect = container.getBoundingClientRect();
+      const x = ((e.clientX - rect.left) / (rect.width || 1)) * 2 - 1;
+      const y = -(((e.clientY - rect.top) / (rect.height || 1)) * 2 - 1);
+      pointerTargetRef.current.set(x, y);
+    };
+
+    container.addEventListener('pointermove', handlePointerMove);
+    return () => {
+      container.removeEventListener('pointermove', handlePointerMove);
+    };
+  }, []);
+
+  return <div ref={containerRef} className={`color-bends-container ${className}`} style={style} />;
+}
+
+```
+
+### Component CSS
+```css
+.color-bends-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+```
+
+### Integration Instructions
+1. Install any listed dependencies.
+2. Copy the component source into the appropriate directory in the project.
+3. Import the CSS file alongside the component.
+4. Import and render the component using the usage example above as a starting point.
+5. Adjust props as needed for the specific use case — refer to the props table for all available options.
+
+</USER_REQUEST>
+<ADDITIONAL_METADATA>
+The current local time is: 2026-06-03T22:03:58+05:30.
+</ADDITIONAL_METADATA>
+<USER_SETTINGS_CHANGE>
+The user changed setting `Model Selection` from Gemini 3.5 Flash (Medium) to Gemini 3.1 Pro (Low). No need to comment on this change if the user doesn't ask about it. If reporting what model you are, please use a human readable name instead of the exact string.
+</USER_SETTINGS_CHANGE>

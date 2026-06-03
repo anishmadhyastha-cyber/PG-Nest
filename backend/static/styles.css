@@ -111,6 +111,16 @@ h1, h2, h3, h4, h5, h6 {
     color: var(--primary);
 }
 
+/* Dark Room toggle button */
+.btn-dark-room {
+    padding: 9px 12px;
+    line-height: 1;
+}
+
+.btn-dark-room .icon-sun {
+    display: none; /* shown only in dark mode via dark-mode.css */
+}
+
 .btn-block {
     display: flex;
     width: 100%;
@@ -1562,4 +1572,395 @@ h1, h2, h3, h4, h5, h6 {
         gap: 15px;
         text-align: center;
     }
+}
+
+/* Google Places API Image Styles */
+.pg-card-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 1;
+    position: relative;
+    border-radius: var(--border-radius-md) var(--border-radius-md) 0 0;
+}
+
+.details-image-container {
+    width: 100%;
+    height: 250px;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    background-color: var(--bg-light);
+    padding: 20px;
+    border-radius: var(--border-radius-md);
+    border: 1px solid var(--border-color);
+}
+
+.details-meta-item {
+    font-size: 13px;
+}
+
+.details-meta-item strong {
+    color: var(--secondary);
+    display: inline-block;
+    width: 140px;
+}
+
+.details-amenities-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.details-amenity-badge {
+    background-color: var(--border-color);
+    color: var(--text-main);
+    padding: 6px 12px;
+    border-radius: 30px;
+    font-size: 12px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.details-amenity-badge.present {
+    background-color: rgba(16, 185, 129, 0.1);
+    color: #10b981;
+}
+
+.details-amenity-badge.absent {
+    background-color: rgba(244, 63, 94, 0.1);
+    color: #f43f5e;
+}
+
+.routing-diagram-container {
+    background-color: #0f172a;
+    border-radius: var(--border-radius-md);
+    padding: 20px;
+    color: #94a3b8;
+}
+
+.routing-title {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--primary);
+    margin-bottom: 15px;
+}
+
+.routing-flow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+    padding: 10px 0;
+}
+
+.routing-node {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    z-index: 2;
+}
+
+.routing-circle {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background-color: #1e293b;
+    border: 2px solid #38bdf8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #38bdf8;
+}
+
+.routing-node.active .routing-circle {
+    background-color: var(--primary);
+    border-color: var(--primary);
+    color: var(--bg-white);
+}
+
+.routing-label {
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.routing-line {
+    flex: 1;
+    height: 2px;
+    background-color: #334155;
+    margin: 0 -5px;
+    position: relative;
+    top: -10px;
+}
+
+.routing-dist {
+    position: absolute;
+    top: -30px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 10px;
+    background-color: #1e293b;
+    padding: 2px 8px;
+    border-radius: 10px;
+    color: #38bdf8;
+}
+
+/* Footer styling */
+.app-footer {
+    background-color: var(--secondary);
+    color: rgba(255,255,255,0.6);
+    border-top: 1px solid rgba(255,255,255,0.05);
+    padding: 30px 20px;
+    font-size: 13px;
+    margin-top: 80px;
+}
+
+.footer-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.footer-links {
+    display: flex;
+    gap: 20px;
+}
+
+.footer-links a {
+    color: rgba(255,255,255,0.6);
+    text-decoration: none;
+    transition: var(--transition);
+}
+
+.footer-links a:hover {
+    color: var(--primary);
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 900px) {
+    .hero-container {
+        grid-template-columns: 1fr;
+        gap: 40px;
+    }
+    
+    .recommender-container {
+        grid-template-columns: 1fr;
+    }
+    
+    .recommender-sidebar {
+        position: relative;
+        top: 0;
+    }
+    
+    .charts-container {
+        grid-template-columns: 1fr;
+    }
+    
+    .footer-container {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+    }
+}
+
+/* Google Places API Image Styles */
+.pg-card-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 1;
+    position: relative;
+    border-radius: var(--border-radius-md) var(--border-radius-md) 0 0;
+}
+
+.details-image-container {
+    width: 100%;
+    height: 250px;
+    border-radius: var(--border-radius-md);
+    overflow: hidden;
+    margin-bottom: 20px;
+}
+
+.details-modal-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Home Page Features Section */
+.features-section {
+    padding: 80px 20px;
+    background-color: var(--bg-white);
+    border-top: 1px solid var(--border-color);
+}
+
+.features-container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.features-header {
+    text-align: center;
+    margin-bottom: 50px;
+}
+
+.features-header h2 {
+    font-size: 36px;
+    color: var(--secondary);
+    margin-bottom: 12px;
+}
+
+.features-header p {
+    color: var(--text-muted);
+    font-size: 18px;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 30px;
+}
+
+.feature-card {
+    background-color: var(--bg-light);
+    border: 1px solid var(--border-color);
+    padding: 30px;
+    border-radius: var(--border-radius-lg);
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    transition: var(--transition);
+}
+
+.feature-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--primary);
+    box-shadow: var(--shadow-medium);
+}
+
+.feature-card i {
+    color: var(--primary);
+    width: 36px;
+    height: 36px;
+}
+
+.feature-card h3 {
+    font-size: 20px;
+    color: var(--secondary);
+}
+
+.feature-card p {
+    color: var(--text-muted);
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+/* Methodology Section styling */
+.methodology-section {
+    max-width: 1200px;
+    margin: 40px auto 60px auto;
+    padding: 0 20px;
+    animation: fadeIn 0.4s ease-in-out;
+}
+
+.methodology-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+    gap: 30px;
+    margin-top: 30px;
+}
+
+@media (max-width: 1100px) {
+    .methodology-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.methodology-card {
+    background-color: var(--bg-white);
+    border-radius: var(--border-radius-lg);
+    padding: 30px;
+    box-shadow: var(--shadow-soft);
+    border: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.methodology-card-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-bottom: 2px solid var(--border-color);
+    padding-bottom: 12px;
+}
+
+.methodology-icon {
+    color: var(--primary);
+    width: 28px;
+    height: 28px;
+}
+
+.formula-box {
+    background-color: var(--secondary);
+    color: #f8fafc;
+    padding: 18px;
+    border-radius: var(--border-radius-md);
+    text-align: center;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 16px;
+    font-weight: 700;
+    margin: 10px 0;
+    box-shadow: inset 0 2px 8px rgba(0,0,0,0.2);
+    border-left: 4px solid var(--primary);
+}
+
+.formula-box-small {
+    background-color: var(--secondary);
+    color: #f8fafc;
+    padding: 10px 15px;
+    border-radius: var(--border-radius-sm);
+    text-align: center;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 14px;
+    font-weight: 700;
+    margin: 5px 0;
+    display: inline-block;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+    border-left: 3px solid var(--primary);
+}
+
+.formula-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    background-color: var(--bg-light);
+    padding: 15px;
+    border-radius: var(--border-radius-md);
+    border: 1px solid var(--border-color);
+}
+
+.formula-item {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.methodology-steps {
+    margin-left: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.methodology-steps li {
+    font-size: 14px;
 }

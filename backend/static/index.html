@@ -14,6 +14,7 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     <!-- Stylesheet -->
     <link rel="stylesheet" href="/static/styles.css">
+    <link rel="stylesheet" href="/static/dark-mode.css">
 </head>
 <body>
 
@@ -27,9 +28,14 @@
             <nav class="nav-menu">
                 <a href="#home" class="nav-link active">Home</a>
                 <a href="#recommender" class="nav-link">Recommender</a>
-                <a href="#analytics" class="nav-link" id="nav-analytics">Analytics Dashboard</a>
+                <a href="#analytics" class="nav-link" id="nav-analytics">Analytics</a>
+                <a href="#methodology" class="nav-link" id="nav-methodology">Methodology</a>
             </nav>
             <div class="header-actions">
+                <button class="btn btn-outline btn-dark-room" id="btn-dark-room" title="Toggle Dark Room">
+                    <i data-lucide="moon" class="icon-moon"></i>
+                    <i data-lucide="sun" class="icon-sun"></i>
+                </button>
                 <button class="btn btn-secondary btn-login">Student Portal</button>
                 <button class="btn btn-primary btn-add-listing">List a PG</button>
             </div>
@@ -37,26 +43,59 @@
     </header>
 
     <main>
-        <!-- Hero Section (Landing State before submission) -->
-        <section id="home" class="hero-section">
-            <div class="hero-container full-width-hero">
-                <div class="hero-content centered-text">
-                    <span class="hero-tag">BMSIT & MSRIT Student Housing</span>
-                    <h1 class="hero-title">Find & Rank Your Best Property</h1>
-                    <p class="hero-subtitle">
-                        An interactive multi-objective decision system to rank and match local PG accommodations based on your personal priorities.
-                    </p>
-                    <button class="btn btn-primary btn-lg" id="btn-start-matching">
-                        <i data-lucide="sparkles"></i> Start Priority Matcher
-                    </button>
-                    <div class="hero-badges justify-center">
-                        <div class="hero-badge-item">
-                            <i data-lucide="shield-check"></i>
-                            <span>Verified Listings</span>
+        <!-- Home View Page -->
+        <section id="home" class="home-view-page">
+            <div class="hero-section">
+                <div class="hero-container full-width-hero">
+                    <div class="hero-content centered-text">
+                        <span class="hero-tag">BMSIT & MSRIT Student Housing</span>
+                        <h1 class="hero-title">Find & Rank Your Best Property</h1>
+                        <p class="hero-subtitle">
+                            An interactive multi-objective decision system to rank and match local PG accommodations based on your personal priorities.
+                        </p>
+                        <button class="btn btn-primary btn-lg" id="btn-start-matching">
+                            <i data-lucide="sparkles"></i> Start Priority Matcher
+                        </button>
+                        <div class="hero-badges justify-center">
+                            <div class="hero-badge-item">
+                                <i data-lucide="shield-check"></i>
+                                <span>Verified Listings</span>
+                            </div>
+                            <div class="hero-badge-item">
+                                <i data-lucide="users"></i>
+                                <span>Active Student Hub</span>
+                            </div>
                         </div>
-                        <div class="hero-badge-item">
-                            <i data-lucide="users"></i>
-                            <span>Active Student Hub</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="features-section">
+                <div class="features-container">
+                    <div class="features-header">
+                        <h2>Why Use PGNest?</h2>
+                        <p>We combine advanced mathematics with intuitive controls to take the anxiety out of student housing.</p>
+                    </div>
+                    <div class="features-grid">
+                        <div class="feature-card">
+                            <i data-lucide="sliders-horizontal"></i>
+                            <h3>Personalized Priorities</h3>
+                            <p>Specify what you care about most: budget, distance, safety, quality, or amenities. The system computes a custom fit score for each listing.</p>
+                        </div>
+                        <div class="feature-card">
+                            <i data-lucide="calculator"></i>
+                            <h3>Mathematical MCDA Algorithms</h3>
+                            <p>Choose between the WSM (Weighted Sum Model) and TOPSIS vector-space algorithms to rank properties mathematically.</p>
+                        </div>
+                        <div class="feature-card">
+                            <i data-lucide="bar-chart-3"></i>
+                            <h3>Interactive Market Analytics</h3>
+                            <p>Browse statistics of local PGs, average rents by room type, and rent-vs-distance scatter coordinate charts to analyze the market.</p>
+                        </div>
+                        <div class="feature-card">
+                            <i data-lucide="navigation"></i>
+                            <h3>Visual Transit Pathways</h3>
+                            <p>View detailed routing diagrams from BMSIT to the nearest bus stops and residences to understand your daily commute.</p>
                         </div>
                     </div>
                 </div>
@@ -64,7 +103,7 @@
         </section>
 
         <!-- Priorities Step-by-Step Onboarding Wizard Modal Overlay -->
-        <div class="modal-overlay open" id="wizard-overlay">
+        <div class="modal-overlay" id="wizard-overlay">
             <div class="modal-container wizard-container">
                 <div class="wizard-header">
                     <div class="wizard-title-block">
@@ -285,6 +324,112 @@
                     <div class="chart-wrapper">
                         <canvas id="rentDistanceChart"></canvas>
                     </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Methodology Page Section -->
+        <section id="methodology" class="methodology-section hidden">
+            <div class="section-header" style="flex-direction: column; align-items: flex-start; gap: 8px;">
+                <h2>Recommendation Methodology & Mathematics</h2>
+                <p>Learn how PGNest computes recommendation scores using Multi-Criteria Decision Analysis (MCDA).</p>
+            </div>
+            
+            <div class="methodology-grid">
+                <!-- Section 1: Power Scaling weights -->
+                <div class="methodology-card">
+                    <div class="methodology-card-header">
+                        <i data-lucide="sliders-horizontal" class="methodology-icon"></i>
+                        <h3>1. Non-Linear Priority Weight Scaling</h3>
+                    </div>
+                    <p>
+                        When you rate your priorities on a scale of 1 to 10, a linear translation often dilutes extreme preferences. 
+                        To solve this, PGNest applies a <strong>quadratic power-scaling function</strong> to the user-defined ratings:
+                    </p>
+                    <div class="formula-box">
+                        w<sub>j</sub> = p<sub>j</sub><sup>2</sup> &frasl; &sum;<sub>k=1..n</sub> p<sub>k</sub><sup>2</sup>
+                    </div>
+                    <p>
+                        By squaring the ratings before normalization, a critical requirement (10/10) gets <strong>4 times the weight</strong> of a moderate requirement (5/10). 
+                        This ensures dominant criteria mathematically drive the rankings, matching realistic student trade-offs.
+                    </p>
+                </div>
+
+                <!-- Section 2: Data Normalization -->
+                <div class="methodology-card">
+                    <div class="methodology-card-header">
+                        <i data-lucide="percent" class="methodology-icon"></i>
+                        <h3>2. Criteria Normalization</h3>
+                    </div>
+                    <p>
+                        Since criteria have different units (Rent in ₹, Distance in km, Safety in stars), they must be normalized to a dimensionless range [0, 1]:
+                    </p>
+                    <div class="formula-list">
+                        <div class="formula-item">
+                            <strong>Maximization Criteria (Safety, Quality, Amenities):</strong>
+                            <div class="formula-box-small">r<sub>ij</sub> = (x<sub>ij</sub> - x<sub>j</sub><sup>min</sup>) &frasl; (x<sub>j</sub><sup>max</sup> - x<sub>j</sub><sup>min</sup>)</div>
+                        </div>
+                        <div class="formula-item">
+                            <strong>Minimization Criteria (Rent, Proximity Distance):</strong>
+                            <div class="formula-box-small">r<sub>ij</sub> = 1 - (x<sub>ij</sub> - x<sub>j</sub><sup>min</sup>) &frasl; (x<sub>j</sub><sup>max</sup> - x<sub>j</sub><sup>min</sup>)</div>
+                        </div>
+                    </div>
+                    <p>
+                        This maps the worst-performing property to 0.0 and the best-performing property to 1.0 for each specific criterion.
+                    </p>
+                </div>
+
+                <!-- Section 3: WSM -->
+                <div class="methodology-card">
+                    <div class="methodology-card-header">
+                        <i data-lucide="plus-circle" class="methodology-icon"></i>
+                        <h3>3. Weighted Sum Model (WSM)</h3>
+                    </div>
+                    <p>
+                        The Weighted Sum Model is a linear, additive multi-objective aggregation method. 
+                        The overall rating score for a PG accommodation i is calculated as:
+                    </p>
+                    <div class="formula-box">
+                        S<sub>i</sub> = &sum;<sub>j=1..n</sub> (w<sub>j</sub> &times; r<sub>ij</sub>)
+                    </div>
+                    <p>
+                        It is highly intuitive and linear: a high score in one criterion can compensate for a low score in another.
+                    </p>
+                </div>
+
+                <!-- Section 4: TOPSIS -->
+                <div class="methodology-card">
+                    <div class="methodology-card-header">
+                        <i data-lucide="bar-chart-3" class="methodology-icon"></i>
+                        <h3>4. TOPSIS Algorithm</h3>
+                    </div>
+                    <p>
+                        The <em>Technique for Order of Preference by Similarity to Ideal Solution (TOPSIS)</em> is a non-linear geometric MCDA algorithm. It ranks accommodations based on their distance to the ideal positive and negative bounds:
+                    </p>
+                    <ol class="methodology-steps">
+                        <li>
+                            <strong>Vector Normalization:</strong> Renders criteria scale-independent.
+                            <div class="formula-box-small">v<sub>ij</sub> = x<sub>ij</sub> &frasl; &radic;(&sum;<sub>k=1..m</sub> x<sub>kj</sub><sup>2</sup>)</div>
+                        </li>
+                        <li>
+                            <strong>Weighted Normalized Matrix:</strong> Multiplying weights: y<sub>ij</sub> = w<sub>j</sub> &times; v<sub>ij</sub>.
+                        </li>
+                        <li>
+                            <strong>Identify Ideal Best (A<sup>*</sup>) & Negative-Ideal Worst (A<sup>-</sup>):</strong>
+                            <br>Considers best and worst achievable values across the cohort.
+                        </li>
+                        <li>
+                            <strong>Compute Euclidean Distances:</strong>
+                            <div class="formula-box-small">S<sub>i</sub><sup>*</sup> = &radic;(&sum; (y<sub>ij</sub> - y<sub>j</sub><sup>*</sup>)<sup>2</sup>) &nbsp; , &nbsp; S<sub>i</sub><sup>-</sup> = &radic;(&sum; (y<sub>ij</sub> - y<sub>j</sub><sup>-</sup>)<sup>2</sup>)</div>
+                        </li>
+                        <li>
+                            <strong>Compute Closeness Coefficient:</strong>
+                            <div class="formula-box-small">C<sub>i</sub> = S<sub>i</sub><sup>-</sup> &frasl; (S<sub>i</sub><sup>*</sup> + S<sub>i</sub><sup>-</sup>)</div>
+                        </li>
+                    </ol>
+                    <p>
+                        TOPSIS favors accommodations that are balanced and penalizes those with extreme weaknesses.
+                    </p>
                 </div>
             </div>
         </section>

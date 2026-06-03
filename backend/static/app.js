@@ -4,6 +4,28 @@ document.addEventListener("DOMContentLoaded", () => {
     // Icons initialization
     lucide.createIcons();
 
+    // Dark Room Feature Toggle
+    const btnDarkRoom = document.getElementById('btn-dark-room');
+    const applyDarkMode = (enabled) => {
+        document.body.classList.toggle('dark-mode', enabled);
+        // Swap icon: moon in light mode, sun in dark mode
+        const moonIcon = btnDarkRoom.querySelector('.icon-moon');
+        const sunIcon  = btnDarkRoom.querySelector('.icon-sun');
+        if (moonIcon) moonIcon.style.display = enabled ? 'none'   : '';
+        if (sunIcon)  sunIcon.style.display  = enabled ? ''       : 'none';
+    };
+    if (btnDarkRoom) {
+        // Restore saved preference
+        const saved = localStorage.getItem('dark-room') === 'enabled';
+        applyDarkMode(saved);
+        btnDarkRoom.addEventListener('click', () => {
+            const isDark = document.body.classList.contains('dark-mode');
+            applyDarkMode(!isDark);
+            localStorage.setItem('dark-room', !isDark ? 'enabled' : 'disabled');
+        });
+    }
+
+
     // DOM Elements - Wizard Onboarding
     const wizardOverlay = document.getElementById("wizard-overlay");
     const wizardTitle = document.getElementById("wizard-title");
@@ -108,6 +130,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Initialize
     initWizardListeners();
     fetchStats();
+    loadRecommendations();
 
     // 1. Hero start button
     if (btnStartMatching) {
@@ -142,13 +165,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 // Submit Form!
                 saveWizardState();
                 closeWizardModal();
-                recommenderSection.classList.remove("hidden");
-                recommenderSection.scrollIntoView({ behavior: 'smooth' });
-                
-                // Active menu highlights
-                navLinks.forEach(l => l.classList.remove("active"));
-                document.querySelector('a[href="#recommender"]').classList.add("active");
-                
+                showView("recommender");
                 loadRecommendations();
             }
         });
@@ -395,12 +412,16 @@ document.addEventListener("DOMContentLoaded", () => {
             card.innerHTML = `
                 <div class="card-image-section">
                     <div class="card-image-bg"></div>
-                    <svg width="120" height="90" viewBox="0 0 100 80" fill="none" xmlns="http://www.w3.org/2000/svg" style="z-index: 1;">
-                        <path d="M10 50 L50 20 L90 50 Z" fill="#ff5a3c" fill-opacity="0.9"/>
-                        <rect x="25" y="45" width="50" height="30" fill="#e2e8f0"/>
-                        <rect x="40" y="55" width="20" height="20" fill="#334155"/>
-                        <circle cx="50" cy="35" r="5" fill="#f8fafc"/>
-                    </svg>
+                    ${pg.photo_url ? 
+                        `<img src="${pg.photo_url}" alt="${pg.pg_name}" class="pg-card-img" onerror="this.outerHTML='<svg width=\\'120\\' height=\\'90\\' viewBox=\\'0 0 100 80\\' fill=\\'none\\' xmlns=\\'http://www.w3.org/2000/svg\\' style=\\'z-index: 1;\\'><path d=\\'M10 50 L50 20 L90 50 Z\\' fill=\\'#ff5a3c\\' fill-opacity=\\'0.9\\'/><rect x=\\'25\\' y=\\'45\\' width=\\'50\\' height=\\'30\\' fill=\\'#e2e8f0\\'/><rect x=\\'40\\' y=\\'55\\' width=\\'20\\' height=\\'20\\' fill=\\'#334155\\'/><circle cx=\\'50\\' cy=\\'35\\' r=\\'5\\' fill=\\'#f8fafc\\'/></svg>'">` 
+                        : 
+                        `<svg width="120" height="90" viewBox="0 0 100 80" fill="none" xmlns="http://www.w3.org/2000/svg" style="z-index: 1;">
+                            <path d="M10 50 L50 20 L90 50 Z" fill="#ff5a3c" fill-opacity="0.9"/>
+                            <rect x="25" y="45" width="50" height="30" fill="#e2e8f0"/>
+                            <rect x="40" y="55" width="20" height="20" fill="#334155"/>
+                            <circle cx="50" cy="35" r="5" fill="#f8fafc"/>
+                        </svg>`
+                    }
                     <div class="price-tag">₹${parseInt(pg.monthly_rent).toLocaleString('en-IN')}<span style="font-size:10px; font-weight:500;">/mo</span></div>
                     <div class="rank-badge">Rank #${index + 1}</div>
                     <div class="match-score-badge">${scorePct}% Match</div>
@@ -646,6 +667,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         modalDetailsContent.innerHTML = `
             <div class="details-grid">
+                ${pg.photo_url ? `<div class="details-image-container"><img src="${pg.photo_url}" class="details-modal-img" alt="${pg.pg_name}"></div>` : ''}
                 <div class="details-header-block">
                     <div class="details-title-row">
                         <div>
@@ -712,6 +734,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     </div>
                 </div>
 
+                ${parseFloat(pg.distance_to_bmsit_km) > 1.0 ? `
                 <div>
                     <h4 style="margin-bottom:12px;">Transit & Routing Pathway</h4>
                     <div class="routing-diagram-container">
@@ -740,9 +763,10 @@ document.addEventListener("DOMContentLoaded", () => {
                         </div>
                     </div>
                 </div>
+                ` : ''}
                 
                 <div style="margin-top:15px; text-align:center;">
-                    <a href="${pg.verification_link}" target="_blank" class="btn btn-primary" style="text-decoration:none;">
+                    <a href="${pg.google_maps_url || pg.verification_link}" target="_blank" class="btn btn-primary" style="text-decoration:none;">
                         <i data-lucide="external-link"></i> View Location on Google Maps
                     </a>
                 </div>
@@ -769,28 +793,57 @@ document.addEventListener("DOMContentLoaded", () => {
         if (e.target === compareModal || e.target === detailsModal) closeModal();
     });
 
+    // SPA View Router
+    function showView(viewId) {
+        // Hide all views
+        const views = ["home", "recommender", "analytics", "methodology"];
+        views.forEach(id => {
+            const section = document.getElementById(id);
+            if (section) section.classList.add("hidden");
+            
+            const link = document.querySelector(`.nav-link[href="#${id}"]`);
+            if (link) link.classList.remove("active");
+        });
+        
+        // Show selected view
+        const activeSection = document.getElementById(viewId);
+        if (activeSection) {
+            activeSection.classList.remove("hidden");
+        }
+        
+        const activeLink = document.querySelector(`.nav-link[href="#${viewId}"]`);
+        if (activeLink) activeLink.classList.add("active");
+        
+        // If switching to Recommender and listings are empty, load them
+        if (viewId === "recommender" && loadedAccommodations.length === 0) {
+            loadRecommendations();
+        }
+        
+        // If switching to Analytics, render charts
+        if (viewId === "analytics") {
+            if (marketStats) {
+                renderCharts(marketStats);
+            }
+        }
+        
+        // Close wizard modal just in case it is open when they switch tabs
+        closeWizardModal();
+        
+        // Scroll to top
+        window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
     // 12. Navigation Actions for Dashboard Tab
     navLinks.forEach(link => {
         link.addEventListener("click", (e) => {
-            navLinks.forEach(l => l.classList.remove("active"));
-            
-            if (link.getAttribute("href") === "#analytics") {
-                e.preventDefault();
-                analyticsSection.classList.remove("hidden");
-                analyticsSection.scrollIntoView({ behavior: 'smooth' });
-                link.classList.add("active");
-                if (marketStats) renderCharts(marketStats);
-            } else {
-                analyticsSection.classList.add("hidden");
-                link.classList.add("active");
-            }
+            e.preventDefault();
+            const viewId = link.getAttribute("href").substring(1);
+            showView(viewId);
         });
     });
 
     closeAnalyticsBtn.addEventListener("click", () => {
-        analyticsSection.classList.add("hidden");
-        document.querySelector('a[href="#home"]').click();
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        showView("home");
     });
 
     // 13. Fetch stats and render analytical Charts (Chart.js)

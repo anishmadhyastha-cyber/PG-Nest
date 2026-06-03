@@ -67,6 +67,9 @@ def test_recommend_wsm():
         
         # Subscores must be present and bounded
         assert "subscores" in pg
+        
+        # Check new image API fields
+        assert "photo_url" in pg
         sub = pg["subscores"]
         assert 0.0 <= sub["sub_cost"] <= 1.0
         assert 0.0 <= sub["sub_dist"] <= 1.0
@@ -120,6 +123,9 @@ def test_recommend_topsis():
         assert pg["room_type"].lower() == "triple"
         assert pg["monthly_rent"] <= 10000
         assert "score" in pg
+        
+        # Check new image API fields
+        assert "photo_url" in pg
         assert 0.0 <= pg["score"] <= 1.0
         
     # Verify scores are sorted descending
