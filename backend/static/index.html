@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PGNest | Smart Student Accommodation Recommendation System</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+
+    <!-- Header Navigation -->
+    <header class="app-header">
+        <div class="header-container">
+            <div class="logo">
+                <i data-lucide="home" class="logo-icon"></i>
+                <span class="logo-text">PG<span>Nest</span></span>
+            </div>
+            <nav class="nav-menu">
+                <a href="#home" class="nav-link active">Home</a>
+                <a href="#recommender" class="nav-link">Recommender</a>
+                <a href="#analytics" class="nav-link" id="nav-analytics">Analytics Dashboard</a>
+            </nav>
+            <div class="header-actions">
+                <button class="btn btn-secondary btn-login">Student Portal</button>
+                <button class="btn btn-primary btn-add-listing">List a PG</button>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <!-- Hero Section (Landing State before submission) -->
+        <section id="home" class="hero-section">
+            <div class="hero-container full-width-hero">
+                <div class="hero-content centered-text">
+                    <span class="hero-tag">BMSIT & MSRIT Student Housing</span>
+                    <h1 class="hero-title">Find & Rank Your Best Property</h1>
+                    <p class="hero-subtitle">
+                        An interactive multi-objective decision system to rank and match local PG accommodations based on your personal priorities.
+                    </p>
+                    <button class="btn btn-primary btn-lg" id="btn-start-matching">
+                        <i data-lucide="sparkles"></i> Start Priority Matcher
+                    </button>
+                    <div class="hero-badges justify-center">
+                        <div class="hero-badge-item">
+                            <i data-lucide="shield-check"></i>
+                            <span>Verified Listings</span>
+                        </div>
+                        <div class="hero-badge-item">
+                            <i data-lucide="users"></i>
+                            <span>Active Student Hub</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Priorities Step-by-Step Onboarding Wizard Modal Overlay -->
+        <div class="modal-overlay open" id="wizard-overlay">
+            <div class="modal-container wizard-container">
+                <div class="wizard-header">
+                    <div class="wizard-title-block">
+                        <h2 id="wizard-title">Find your Best PG</h2>
+                        <p class="wizard-subtitle">Set your preferences and priorities to match accommodations</p>
+                    </div>
+                    <!-- Close button, only visible when editing priorities later -->
+                    <button class="btn-close-modal hidden" id="btn-close-wizard"><i data-lucide="x"></i></button>
+                </div>
+
+                <!-- Wizard Progress Indicator -->
+                <div class="wizard-progress-bar">
+                    <div class="progress-step active" data-step="1">
+                        <div class="step-num">1</div>
+                        <div class="step-text">Constraints</div>
+                    </div>
+                    <div class="progress-line"></div>
+                    <div class="progress-step" data-step="2">
+                        <div class="step-num">2</div>
+                        <div class="step-text">Priorities</div>
+                    </div>
+                    <div class="progress-line"></div>
+                    <div class="progress-step" data-step="3">
+                        <div class="step-num">3</div>
+                        <div class="step-text">Amenities</div>
+                    </div>
+                </div>
+
+                <div class="wizard-body">
+                    <form id="wizard-form">
+                        <!-- STEP 1: Hard Constraints -->
+                        <div class="wizard-step-section" id="step-section-1">
+                            <div class="form-group">
+                                <label><i data-lucide="user-check"></i> Gender Group</label>
+                                <select id="pref-gender" required>
+                                    <option value="male">Male (Boys / Gents PG)</option>
+                                    <option value="female">Female (Girls / Ladies PG)</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label><i data-lucide="layout"></i> Sharing / Room Type</label>
+                                <select id="pref-room-type" required>
+                                    <option value="any">Any Room Type</option>
+                                    <option value="Single">Single Room</option>
+                                    <option value="Double">Double Sharing</option>
+                                    <option value="Triple">Triple Sharing</option>
+                                    <option value="Dormitory">Dormitory</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label><i data-lucide="indian-rupee"></i> Max Monthly Rent (Budget)</label>
+                                <div class="price-slider-container">
+                                    <input type="range" id="pref-budget" min="6000" max="15000" step="500" value="12000">
+                                    <span class="budget-value">₹12,000 max</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- STEP 2: Rate Priorities (1 to 10) -->
+                        <div class="wizard-step-section hidden" id="step-section-2">
+                            <p class="step-instruction">Rate how important each objective is to you on a scale of 1 (Low) to 10 (Critical):</p>
+                            
+                            <!-- Rating cost -->
+                            <div class="priority-rating-item">
+                                <div class="rating-labels-row">
+                                    <span class="rating-title"><i data-lucide="indian-rupee"></i> Affordability (Cost)</span>
+                                    <span class="rating-value" id="rate-cost-val">5 / 10</span>
+                                </div>
+                                <div class="rating-input-row">
+                                    <input type="range" class="rating-slider" id="rate-cost" min="1" max="10" value="5">
+                                </div>
+                            </div>
+
+                            <!-- Rating distance -->
+                            <div class="priority-rating-item">
+                                <div class="rating-labels-row">
+                                    <span class="rating-title"><i data-lucide="map-pin"></i> Proximity (Distance to Campus)</span>
+                                    <span class="rating-value" id="rate-distance-val">5 / 10</span>
+                                </div>
+                                <div class="rating-input-row">
+                                    <input type="range" class="rating-slider" id="rate-distance" min="1" max="10" value="5">
+                                </div>
+                            </div>
+
+                            <!-- Rating safety -->
+                            <div class="priority-rating-item">
+                                <div class="rating-labels-row">
+                                    <span class="rating-title"><i data-lucide="shield"></i> Locality Safety</span>
+                                    <span class="rating-value" id="rate-safety-val">5 / 10</span>
+                                </div>
+                                <div class="rating-input-row">
+                                    <input type="range" class="rating-slider" id="rate-safety" min="1" max="10" value="5">
+                                </div>
+                            </div>
+
+                            <!-- Rating quality -->
+                            <div class="priority-rating-item">
+                                <div class="rating-labels-row">
+                                    <span class="rating-title"><i data-lucide="star"></i> Ratings & Quality</span>
+                                    <span class="rating-value" id="rate-quality-val">5 / 10</span>
+                                </div>
+                                <div class="rating-input-row">
+                                    <input type="range" class="rating-slider" id="rate-quality" min="1" max="10" value="5">
+                                </div>
+                            </div>
+
+                            <!-- Rating amenities -->
+                            <div class="priority-rating-item">
+                                <div class="rating-labels-row">
+                                    <span class="rating-title"><i data-lucide="smile"></i> Amenities Match</span>
+                                    <span class="rating-value" id="rate-amenities-val">5 / 10</span>
+                                </div>
+                                <div class="rating-input-row">
+                                    <input type="range" class="rating-slider" id="rate-amenities" min="1" max="10" value="5">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- STEP 3: Select Amenities -->
+                        <div class="wizard-step-section hidden" id="step-section-3">
+                            <p class="step-instruction">Select the amenities you are looking for (used for Amenities Match objective rating):</p>
+                            <div class="wizard-amenities-grid">
+                                <label class="amenity-checkbox-card">
+                                    <input type="checkbox" id="pref-wifi" name="amenity" value="wifi">
+                                    <div class="amenity-card-content">
+                                        <i data-lucide="wifi"></i>
+                                        <span>WiFi Internet</span>
+                                    </div>
+                                </label>
+                                <label class="amenity-checkbox-card">
+                                    <input type="checkbox" id="pref-ac" name="amenity" value="ac">
+                                    <div class="amenity-card-content">
+                                        <i data-lucide="wind"></i>
+                                        <span>Air Conditioning</span>
+                                    </div>
+                                </label>
+                                <label class="amenity-checkbox-card">
+                                    <input type="checkbox" id="pref-food" name="amenity" value="food">
+                                    <div class="amenity-card-content">
+                                        <i data-lucide="coffee"></i>
+                                        <span>Meals Provided</span>
+                                    </div>
+                                </label>
+                                <label class="amenity-checkbox-card">
+                                    <input type="checkbox" id="pref-laundry" name="amenity" value="laundry">
+                                    <div class="amenity-card-content">
+                                        <i data-lucide="shirt"></i>
+                                        <span>Laundry Services</span>
+                                    </div>
+                                </label>
+                                <label class="amenity-checkbox-card">
+                                    <input type="checkbox" id="pref-parking" name="amenity" value="parking">
+                                    <div class="amenity-card-content">
+                                        <i data-lucide="car"></i>
+                                        <span>Vehicle Parking</span>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="wizard-footer">
+                    <button class="btn btn-outline invisible" id="btn-wizard-back">Back</button>
+                    <button class="btn btn-primary" id="btn-wizard-next">Next <i data-lucide="chevron-right"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Analytics Dashboard Panel (Toggled View) -->
+        <section id="analytics" class="analytics-section hidden">
+            <div class="section-header">
+                <h2>Accommodations Market Analytics</h2>
+                <p>High-level statistical distribution of PG rentals around the college area.</p>
+                <button class="btn btn-secondary btn-sm" id="close-analytics">Close Dashboard</button>
+            </div>
+            
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon-wrapper blue"><i data-lucide="building-2"></i></div>
+                    <div class="stat-info">
+                        <span class="stat-value" id="stat-total-pgs">-</span>
+                        <span class="stat-label">Total PGs Loaded</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon-wrapper orange"><i data-lucide="indian-rupee"></i></div>
+                    <div class="stat-info">
+                        <span class="stat-value" id="stat-avg-rent">-</span>
+                        <span class="stat-label">Average Monthly Rent</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon-wrapper green"><i data-lucide="shield-alert"></i></div>
+                    <div class="stat-info">
+                        <span class="stat-value" id="stat-avg-safety">-</span>
+                        <span class="stat-label">Avg Locality Safety Rating</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon-wrapper purple"><i data-lucide="star"></i></div>
+                    <div class="stat-info">
+                        <span class="stat-value" id="stat-avg-rating">-</span>
+                        <span class="stat-label">Avg Student Rating</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="charts-container">
+                <div class="chart-card">
+                    <h3>Rent Distribution by Room Type</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="rentRoomTypeChart"></canvas>
+                    </div>
+                </div>
+                <div class="chart-card">
+                    <h3>Rent vs Distance Scatter Plot</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="rentDistanceChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Recommender Results section -->
+        <section id="recommender" class="recommender-section hidden">
+            <!-- Top Priority Summary Banner -->
+            <div class="priority-summary-banner">
+                <div class="summary-details">
+                    <div class="summary-filters-row">
+                        <span class="summary-tag" id="summary-gender">Male</span>
+                        <span class="summary-tag" id="summary-room">Any Room Type</span>
+                        <span class="summary-tag" id="summary-budget">Under ₹12,000</span>
+                    </div>
+                    <div class="summary-priorities-row" id="summary-priorities-list">
+                        <!-- Dynamic priority weights summary -->
+                    </div>
+                </div>
+                <button class="btn btn-outline" id="btn-edit-priorities">
+                    <i data-lucide="sliders-horizontal"></i> Modify Priorities
+                </button>
+            </div>
+
+            <div class="recommender-container-full">
+                <!-- Recommendations -->
+                <div class="results-pane">
+                    <div class="results-header">
+                        <div>
+                            <h2 class="results-title">Ranked PGs for You</h2>
+                            <p class="results-subtitle" id="results-count">Showing 0 matching options</p>
+                        </div>
+                        <div class="results-controls">
+                            <!-- Toggle algorithm directly in results header -->
+                            <div class="results-alg-toggle">
+                                <span class="toggle-label">Algorithm:</span>
+                                <div class="alg-mini-tabs">
+                                    <button class="alg-mini-tab active" data-alg="wsm">WSM</button>
+                                    <button class="alg-mini-tab" data-alg="topsis">TOPSIS</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- PG Card Grid -->
+                    <div class="listings-grid" id="listings-grid">
+                        <!-- Dynamic content goes here -->
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Side-by-Side Comparison Drawer (Fixed bottom) -->
+    <div class="compare-drawer" id="compare-drawer">
+        <div class="drawer-header">
+            <div class="drawer-title">
+                <i data-lucide="git-compare"></i>
+                <span>Compare Accommodations (<span id="compare-count">0</span>/3 Selected)</span>
+            </div>
+            <div class="drawer-actions">
+                <button class="btn btn-secondary btn-sm" id="btn-clear-compare">Clear All</button>
+                <button class="btn btn-primary btn-sm" id="btn-compare-now">Compare Side-by-Side</button>
+                <button class="btn-close-drawer" id="btn-close-drawer"><i data-lucide="chevrons-down"></i></button>
+            </div>
+        </div>
+        <div class="drawer-content">
+            <div class="compare-thumbnails" id="compare-thumbnails">
+                <!-- Thumbnails of selected PGs -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Side-by-Side Comparison Modal -->
+    <div class="modal-overlay" id="compare-modal">
+        <div class="modal-container compare-modal-container">
+            <div class="modal-header">
+                <h2>Accommodations Comparison</h2>
+                <button class="btn-close-modal"><i data-lucide="x"></i></button>
+            </div>
+            <div class="modal-body overflow-x">
+                <table class="compare-table">
+                    <thead>
+                        <tr id="compare-table-head">
+                            <!-- Dynamic columns -->
+                        </tr>
+                    </thead>
+                    <tbody id="compare-table-body">
+                        <!-- Dynamic comparison rows -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- PG Details Modal -->
+    <div class="modal-overlay" id="details-modal">
+        <div class="modal-container details-modal-container">
+            <div class="modal-header">
+                <h2 id="modal-pg-name">PG Name</h2>
+                <button class="btn-close-modal"><i data-lucide="x"></i></button>
+            </div>
+            <div class="modal-body" id="modal-details-content">
+                <!-- Dynamic detailed content -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+        <div class="footer-container">
+            <p>&copy; 2026 PGNest Inc. Developed for BMSIT student placement support. Multi-Objective Decision Making System.</p>
+            <div class="footer-links">
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms of Service</a>
+                <a href="#">Data Source</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Application Script -->
+    <script src="/static/app.js"></script>
+</body>
+</html>
