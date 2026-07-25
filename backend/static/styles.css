@@ -1773,6 +1773,163 @@ h1, h2, h3, h4, h5, h6 {
     }
 }
 
+/* Mobile Bottom Navigation Bar styling */
+.mobile-bottom-nav {
+    display: none; /* hidden on desktop */
+}
+
+@media (max-width: 768px) {
+    .mobile-bottom-nav {
+        display: flex;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 65px;
+        background-color: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(12px);
+        border-top: 1px solid var(--border-color);
+        justify-content: space-around;
+        align-items: center;
+        z-index: 100;
+        box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.05);
+        padding-bottom: env(safe-area-inset-bottom);
+    }
+    
+    .mobile-nav-link {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-decoration: none;
+        color: var(--text-muted);
+        gap: 4px;
+        transition: var(--transition);
+        flex: 1;
+        padding: 8px 0;
+    }
+    
+    .mobile-nav-link i {
+        width: 20px;
+        height: 20px;
+        transition: var(--transition);
+    }
+    
+    .mobile-nav-link span {
+        font-size: 11px;
+        font-weight: 600;
+    }
+    
+    .mobile-nav-link.active {
+        color: var(--primary);
+    }
+    
+    .mobile-nav-link.active i {
+        transform: translateY(-2px);
+    }
+
+    /* Header layout for mobile */
+    .nav-menu {
+        display: none !important; /* Hide desktop nav */
+    }
+    .header-actions .btn-login,
+    .header-actions .btn-add-listing {
+        display: none !important; /* Hide desktop actions on mobile */
+    }
+    .app-header {
+        padding: 10px 0;
+    }
+    
+    /* Hero section scaling */
+    .hero-section {
+        padding: 60px 15px 80px 15px;
+    }
+    .hero-title {
+        font-size: 34px !important;
+        letter-spacing: -1px;
+    }
+    .hero-subtitle {
+        font-size: 16px !important;
+    }
+    .hero-badges {
+        flex-direction: column;
+        gap: 12px;
+        align-items: center;
+    }
+    
+    /* Grid stacking */
+    .wizard-amenities-grid {
+        grid-template-columns: 1fr !important;
+    }
+    .details-meta-list {
+        grid-template-columns: 1fr !important;
+        padding: 15px !important;
+    }
+    .details-meta-item strong {
+        width: 120px !important;
+    }
+    
+    /* Prevent layout overflow in cards grid */
+    .listings-grid {
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)) !important;
+        gap: 20px !important;
+    }
+    
+    /* Scrollable math equations */
+    .formula-box, .formula-box-small {
+        overflow-x: auto;
+        white-space: nowrap;
+        padding: 12px !important;
+    }
+    
+    /* Modals spacing adjustments */
+    .modal-container {
+        width: 95% !important;
+        padding: 0 !important;
+        max-height: 90vh !important;
+    }
+    .modal-header, .wizard-header {
+        padding: 15px 20px !important;
+    }
+    .modal-body, .wizard-body {
+        padding: 15px 20px !important;
+    }
+    .wizard-footer {
+        padding: 15px 20px !important;
+    }
+    
+    /* Push content up to avoid being covered by mobile bottom nav */
+    main {
+        padding-bottom: 75px !important;
+    }
+    
+    /* Floating compare drawer sizing */
+    .compare-drawer {
+        width: 100% !important;
+        border-radius: 12px 12px 0 0 !important;
+        bottom: -200px;
+    }
+    .compare-drawer.open {
+        bottom: 64px !important; /* Sit just above the mobile bottom nav */
+    }
+    .drawer-header {
+        padding: 10px 15px !important;
+    }
+    .drawer-content {
+        padding: 10px 15px !important;
+        overflow-x: auto;
+    }
+    .compare-thumbnails {
+        gap: 10px !important;
+    }
+    .compare-thumb-card {
+        min-width: 130px !important;
+        padding: 6px 10px !important;
+    }
+    .compare-thumb-name {
+        max-width: 90px !important;
+    }
+}
+
 /* Google Places API Image Styles */
 .pg-card-img {
     width: 100%;

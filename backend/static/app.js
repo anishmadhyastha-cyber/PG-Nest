@@ -810,6 +810,9 @@ document.addEventListener("DOMContentLoaded", () => {
             
             const link = document.querySelector(`.nav-link[href="#${id}"]`);
             if (link) link.classList.remove("active");
+
+            const mobileLink = document.querySelector(`.mobile-nav-link[data-target="${id}"]`);
+            if (mobileLink) mobileLink.classList.remove("active");
         });
         
         // Show selected view
@@ -820,6 +823,9 @@ document.addEventListener("DOMContentLoaded", () => {
         
         const activeLink = document.querySelector(`.nav-link[href="#${viewId}"]`);
         if (activeLink) activeLink.classList.add("active");
+
+        const activeMobileLink = document.querySelector(`.mobile-nav-link[data-target="${viewId}"]`);
+        if (activeMobileLink) activeMobileLink.classList.add("active");
         
         // If switching to Recommender and listings are empty, load them
         if (viewId === "recommender" && loadedAccommodations.length === 0) {
@@ -842,6 +848,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // 12. Navigation Actions for Dashboard Tab
     navLinks.forEach(link => {
+        link.addEventListener("click", (e) => {
+            e.preventDefault();
+            const viewId = link.getAttribute("href").substring(1);
+            showView(viewId);
+        });
+    });
+
+    const mobileNavLinks = document.querySelectorAll(".mobile-nav-link");
+    mobileNavLinks.forEach(link => {
         link.addEventListener("click", (e) => {
             e.preventDefault();
             const viewId = link.getAttribute("href").substring(1);

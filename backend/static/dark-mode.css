@@ -360,3 +360,18 @@ body.dark-mode #btn-dark-room i[data-lucide="moon"] {
 body.dark-mode #btn-dark-room i[data-lucide="sun"] {
     display: inline;
 }
+
+/* ---- Mobile Bottom Navigation Bar ---- */
+body.dark-mode .mobile-bottom-nav {
+    background-color: rgba(19, 21, 28, 0.85);
+    border-top-color: var(--border-color);
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.3);
+}
+
+body.dark-mode .mobile-nav-link {
+    color: var(--text-muted);
+}
+
+body.dark-mode .mobile-nav-link.active {
+    color: var(--primary);
+}
