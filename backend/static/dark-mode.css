@@ -15,6 +15,10 @@ body.dark-mode {
     --shadow-soft:   0 10px 30px rgba(0,0,0,0.4);
     --shadow-medium: 0 15px 40px rgba(0,0,0,0.5);
 
+    /* Code/Math specific colors */
+    --bg-code: #0b0f19;
+    --text-code: #f8fafc;
+
     background-color: var(--bg-light);
     color: var(--text-main);
 }
@@ -330,11 +334,11 @@ body.dark-mode .methodology-card-header {
 
 body.dark-mode .methodology-card p,
 body.dark-mode .methodology-card li {
-    color: var(--text-muted);
+    color: var(--text-main);
 }
 
 body.dark-mode .formula-list {
-    background-color: #252933;
+    background-color: var(--bg-light);
     border-color: var(--border-color);
 }
 

@@ -15,6 +15,10 @@
     <!-- Stylesheet -->
     <link rel="stylesheet" href="/static/styles.css">
     <link rel="stylesheet" href="/static/dark-mode.css">
+    <!-- KaTeX for beautiful math equations -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}]});"></script>
 </head>
 <body>
 
@@ -325,6 +329,18 @@
                         <canvas id="rentDistanceChart"></canvas>
                     </div>
                 </div>
+                <div class="chart-card">
+                    <h3>PG Locality Distribution</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="localityDistributionChart"></canvas>
+                    </div>
+                </div>
+                <div class="chart-card">
+                    <h3>Amenities Availability Rate (%)</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="amenitiesAvailabilityChart"></canvas>
+                    </div>
+                </div>
             </div>
         </section>
 
@@ -347,7 +363,7 @@
                         To solve this, PGNest applies a <strong>quadratic power-scaling function</strong> to the user-defined ratings:
                     </p>
                     <div class="formula-box">
-                        w<sub>j</sub> = p<sub>j</sub><sup>2</sup> &frasl; &sum;<sub>k=1..n</sub> p<sub>k</sub><sup>2</sup>
+                        $$w_j = \frac{p_j^2}{\sum_{k=1}^n p_k^2}$$
                     </div>
                     <p>
                         By squaring the ratings before normalization, a critical requirement (10/10) gets <strong>4 times the weight</strong> of a moderate requirement (5/10). 
@@ -367,11 +383,11 @@
                     <div class="formula-list">
                         <div class="formula-item">
                             <strong>Maximization Criteria (Safety, Quality, Amenities):</strong>
-                            <div class="formula-box-small">r<sub>ij</sub> = (x<sub>ij</sub> - x<sub>j</sub><sup>min</sup>) &frasl; (x<sub>j</sub><sup>max</sup> - x<sub>j</sub><sup>min</sup>)</div>
+                            <div class="formula-box-small">$$r_{ij} = \frac{x_{ij} - x_j^{\text{min}}}{x_j^{\text{max}} - x_j^{\text{min}}}$$</div>
                         </div>
                         <div class="formula-item">
                             <strong>Minimization Criteria (Rent, Proximity Distance):</strong>
-                            <div class="formula-box-small">r<sub>ij</sub> = 1 - (x<sub>ij</sub> - x<sub>j</sub><sup>min</sup>) &frasl; (x<sub>j</sub><sup>max</sup> - x<sub>j</sub><sup>min</sup>)</div>
+                            <div class="formula-box-small">$$r_{ij} = 1 - \frac{x_{ij} - x_j^{\text{min}}}{x_j^{\text{max}} - x_j^{\text{min}}}$$</div>
                         </div>
                     </div>
                     <p>
@@ -390,7 +406,7 @@
                         The overall rating score for a PG accommodation i is calculated as:
                     </p>
                     <div class="formula-box">
-                        S<sub>i</sub> = &sum;<sub>j=1..n</sub> (w<sub>j</sub> &times; r<sub>ij</sub>)
+                        $$S_i = \sum_{j=1}^n (w_j \cdot r_{ij})$$
                     </div>
                     <p>
                         It is highly intuitive and linear: a high score in one criterion can compensate for a low score in another.
@@ -409,22 +425,22 @@
                     <ol class="methodology-steps">
                         <li>
                             <strong>Vector Normalization:</strong> Renders criteria scale-independent.
-                            <div class="formula-box-small">v<sub>ij</sub> = x<sub>ij</sub> &frasl; &radic;(&sum;<sub>k=1..m</sub> x<sub>kj</sub><sup>2</sup>)</div>
+                            <div class="formula-box-small">$$v_{ij} = \frac{x_{ij}}{\sqrt{\sum_{k=1}^m x_{kj}^2}}$$</div>
                         </li>
                         <li>
-                            <strong>Weighted Normalized Matrix:</strong> Multiplying weights: y<sub>ij</sub> = w<sub>j</sub> &times; v<sub>ij</sub>.
+                            <strong>Weighted Normalized Matrix:</strong> Multiplying weights: $$y_{ij} = w_j \cdot v_{ij}$$
                         </li>
                         <li>
-                            <strong>Identify Ideal Best (A<sup>*</sup>) & Negative-Ideal Worst (A<sup>-</sup>):</strong>
+                            <strong>Identify Ideal Best ($A^*$) & Negative-Ideal Worst ($A^-$):</strong>
                             <br>Considers best and worst achievable values across the cohort.
                         </li>
                         <li>
-                            <strong>Compute Euclidean Distances:</strong>
-                            <div class="formula-box-small">S<sub>i</sub><sup>*</sup> = &radic;(&sum; (y<sub>ij</sub> - y<sub>j</sub><sup>*</sup>)<sup>2</sup>) &nbsp; , &nbsp; S<sub>i</sub><sup>-</sup> = &radic;(&sum; (y<sub>ij</sub> - y<sub>j</sub><sup>-</sup>)<sup>2</sup>)</div>
+                            <strong>Compute Euclidean Distances to Ideal Points:</strong>
+                            <div class="formula-box-small">$$S_i^* = \sqrt{\sum_{j=1}^n (y_{ij} - y_j^*)^2} \quad , \quad S_i^- = \sqrt{\sum_{j=1}^n (y_{ij} - y_j^-)^2}$$</div>
                         </li>
                         <li>
                             <strong>Compute Closeness Coefficient:</strong>
-                            <div class="formula-box-small">C<sub>i</sub> = S<sub>i</sub><sup>-</sup> &frasl; (S<sub>i</sub><sup>*</sup> + S<sub>i</sub><sup>-</sup>)</div>
+                            <div class="formula-box-small">$$C_i = \frac{S_i^-}{S_i^* + S_i^-}$$</div>
                         </li>
                     </ol>
                     <p>

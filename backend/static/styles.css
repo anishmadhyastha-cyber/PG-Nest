@@ -24,6 +24,10 @@
     --color-safety: #10b981;
     --color-quality: #eab308;
     --color-amenity: #8b5cf6;
+
+    /* Code/Math specific colors */
+    --bg-code: #1a1e25;
+    --text-code: #f8fafc;
 }
 
 /* Reset and Base Styles */
@@ -1910,8 +1914,8 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .formula-box {
-    background-color: var(--secondary);
-    color: #f8fafc;
+    background-color: var(--bg-code);
+    color: var(--text-code);
     padding: 18px;
     border-radius: var(--border-radius-md);
     text-align: center;
@@ -1924,8 +1928,8 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .formula-box-small {
-    background-color: var(--secondary);
-    color: #f8fafc;
+    background-color: var(--bg-code);
+    color: var(--text-code);
     padding: 10px 15px;
     border-radius: var(--border-radius-sm);
     text-align: center;

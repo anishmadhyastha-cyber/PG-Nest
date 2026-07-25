@@ -178,6 +178,19 @@ def get_stats():
     # Average rent by room type
     avg_rent_by_room_type = df.groupby('room_type')['monthly_rent'].mean().to_dict()
     
+    # Calculate availability rate (%) for core amenities
+    amenity_rates = {
+        "wifi": round((int(df['wifi'].fillna(False).sum()) / total_pgs) * 100, 1) if 'wifi' in df.columns else 0.0,
+        "ac": round((int(df['ac'].fillna(False).sum()) / total_pgs) * 100, 1) if 'ac' in df.columns else 0.0,
+        "food": round((int(df['food_included'].fillna(False).sum()) / total_pgs) * 100, 1) if 'food_included' in df.columns else 0.0,
+        "laundry": round((int(df['laundry'].fillna(False).sum()) / total_pgs) * 100, 1) if 'laundry' in df.columns else 0.0,
+        "parking": round((int(df['parking'].fillna(False).sum()) / total_pgs) * 100, 1) if 'parking' in df.columns else 0.0,
+        "student_community": round((int(df['student_community_present'].fillna(False).sum()) / total_pgs) * 100, 1) if 'student_community_present' in df.columns else 0.0,
+    }
+    
+    # Convert all listings to dictionary for complete market visualization (scatter plot)
+    listings = df.to_dict(orient="records")
+    
     return {
         "total_pgs": total_pgs,
         "avg_rent": round(avg_rent, 2),
@@ -189,7 +202,9 @@ def get_stats():
         "room_type_counts": room_type_counts,
         "locality_counts": locality_counts,
         "gender_counts": gender_counts,
-        "avg_rent_by_room_type": {k: round(v, 2) for k, v in avg_rent_by_room_type.items()}
+        "avg_rent_by_room_type": {k: round(v, 2) for k, v in avg_rent_by_room_type.items()},
+        "amenity_rates": amenity_rates,
+        "listings": listings
     }
 
 @app.post("/api/recommend")

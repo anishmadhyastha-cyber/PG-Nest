@@ -22,6 +22,11 @@ document.addEventListener("DOMContentLoaded", () => {
             const isDark = document.body.classList.contains('dark-mode');
             applyDarkMode(!isDark);
             localStorage.setItem('dark-room', !isDark ? 'enabled' : 'disabled');
+            
+            // Re-render charts dynamically to switch theme colors if analytics is open
+            if (marketStats && !document.getElementById("analytics").classList.contains("hidden")) {
+                renderCharts(marketStats);
+            }
         });
     }
 
@@ -99,6 +104,8 @@ document.addEventListener("DOMContentLoaded", () => {
     // Chart variables
     let rentRoomTypeChart = null;
     let rentDistanceChart = null;
+    let localityDistributionChart = null;
+    let amenitiesAvailabilityChart = null;
 
     // GLOBAL APP STATE (Stores constraints and ratings to prevent data loss)
     const globalState = {
@@ -865,13 +872,29 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
+    function getChartTheme() {
+        const isDark = document.body.classList.contains("dark-mode");
+        return {
+            textColor: isDark ? "#e2e6f0" : "#1a1e25",
+            gridColor: isDark ? "#2a2f3d" : "#eef1f6",
+            tooltipBg: isDark ? "#1a1d24" : "#ffffff"
+        };
+    }
+
     function renderCharts(stats) {
         const ctxRoomType = document.getElementById("rentRoomTypeChart").getContext("2d");
         const ctxDistance = document.getElementById("rentDistanceChart").getContext("2d");
+        const ctxLocality = document.getElementById("localityDistributionChart").getContext("2d");
+        const ctxAmenities = document.getElementById("amenitiesAvailabilityChart").getContext("2d");
 
         if (rentRoomTypeChart) rentRoomTypeChart.destroy();
         if (rentDistanceChart) rentDistanceChart.destroy();
+        if (localityDistributionChart) localityDistributionChart.destroy();
+        if (amenitiesAvailabilityChart) amenitiesAvailabilityChart.destroy();
 
+        const theme = getChartTheme();
+
+        // 1. Rent Room Type Chart (Bar)
         const roomTypes = Object.keys(stats.avg_rent_by_room_type);
         const avgRents = Object.values(stats.avg_rent_by_room_type);
 
@@ -883,10 +906,10 @@ document.addEventListener("DOMContentLoaded", () => {
                     label: "Average Monthly Rent (₹)",
                     data: avgRents,
                     backgroundColor: [
-                        "rgba(255, 90, 60, 0.75)",
-                        "rgba(6, 182, 212, 0.75)",
-                        "rgba(139, 92, 246, 0.75)",
-                        "rgba(16, 185, 129, 0.75)"
+                        "rgba(255, 90, 60, 0.8)",
+                        "rgba(6, 182, 212, 0.8)",
+                        "rgba(139, 92, 246, 0.8)",
+                        "rgba(16, 185, 129, 0.8)"
                     ],
                     borderColor: [
                         "#ff5a3c",
@@ -905,9 +928,15 @@ document.addEventListener("DOMContentLoaded", () => {
                     legend: { display: false }
                 },
                 scales: {
+                    x: {
+                        grid: { color: theme.gridColor },
+                        ticks: { color: theme.textColor }
+                    },
                     y: {
                         beginAtZero: true,
+                        grid: { color: theme.gridColor },
                         ticks: {
+                            color: theme.textColor,
                             callback: function(value) { return "₹" + value.toLocaleString(); }
                         }
                     }
@@ -915,8 +944,9 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
 
-        // Scatter Coordinate dataset
-        const scatterData = loadedAccommodations.map(pg => ({
+        // 2. Rent vs Distance Chart (Scatter)
+        const listData = stats.listings || loadedAccommodations;
+        const scatterData = listData.map(pg => ({
             x: parseFloat(pg.distance_to_bmsit_km),
             y: parseInt(pg.monthly_rent),
             label: pg.pg_name
@@ -928,7 +958,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 datasets: [{
                     label: "PG Accommodation",
                     data: scatterData,
-                    backgroundColor: "rgba(255, 90, 60, 0.7)",
+                    backgroundColor: "rgba(255, 90, 60, 0.8)",
                     borderColor: "#ff5a3c",
                     borderWidth: 1,
                     pointRadius: 6,
@@ -939,6 +969,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 responsive: true,
                 maintainAspectRatio: false,
                 plugins: {
+                    legend: {
+                        labels: { color: theme.textColor }
+                    },
                     tooltip: {
                         callbacks: {
                             label: function(context) {
@@ -950,13 +983,102 @@ document.addEventListener("DOMContentLoaded", () => {
                 },
                 scales: {
                     x: {
-                        title: { display: true, text: "Distance to BMSIT Campus (km)", font: { weight: 'bold' } }
+                        title: { display: true, text: "Distance to BMSIT Campus (km)", color: theme.textColor, font: { weight: 'bold' } },
+                        grid: { color: theme.gridColor },
+                        ticks: { color: theme.textColor }
                     },
                     y: {
-                        title: { display: true, text: "Monthly Rent (₹)", font: { weight: 'bold' } },
+                        title: { display: true, text: "Monthly Rent (₹)", color: theme.textColor, font: { weight: 'bold' } },
+                        grid: { color: theme.gridColor },
                         ticks: {
+                            color: theme.textColor,
                             callback: function(value) { return "₹" + value.toLocaleString(); }
                         }
+                    }
+                }
+            }
+        });
+
+        // 3. Locality Distribution Chart (Doughnut)
+        const localities = Object.keys(stats.locality_counts || {});
+        const localityCounts = Object.values(stats.locality_counts || {});
+
+        localityDistributionChart = new Chart(ctxLocality, {
+            type: "doughnut",
+            data: {
+                labels: localities,
+                datasets: [{
+                    data: localityCounts,
+                    backgroundColor: [
+                        "rgba(255, 90, 60, 0.8)",
+                        "rgba(6, 182, 212, 0.8)",
+                        "rgba(139, 92, 246, 0.8)",
+                        "rgba(16, 185, 129, 0.8)",
+                        "rgba(234, 179, 8, 0.8)"
+                    ],
+                    borderColor: theme.tooltipBg,
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: "right",
+                        labels: {
+                            color: theme.textColor,
+                            font: { family: "'Inter', sans-serif" }
+                        }
+                    }
+                }
+            }
+        });
+
+        // 4. Amenities Availability Chart (Horizontal Bar)
+        const amenityLabels = ["WiFi Internet", "Air Conditioning", "Meals Provided", "Laundry Services", "Vehicle Parking", "Student Community"];
+        const amenityRates = stats.amenity_rates ? [
+            stats.amenity_rates.wifi,
+            stats.amenity_rates.ac,
+            stats.amenity_rates.food,
+            stats.amenity_rates.laundry,
+            stats.amenity_rates.parking,
+            stats.amenity_rates.student_community
+        ] : [0, 0, 0, 0, 0, 0];
+
+        amenitiesAvailabilityChart = new Chart(ctxAmenities, {
+            type: "bar",
+            data: {
+                labels: amenityLabels,
+                datasets: [{
+                    label: "Availability Rate (%)",
+                    data: amenityRates,
+                    backgroundColor: "rgba(6, 182, 212, 0.8)",
+                    borderColor: "#06b6d4",
+                    borderWidth: 1.5,
+                    borderRadius: 6
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    x: {
+                        beginAtZero: true,
+                        max: 100,
+                        grid: { color: theme.gridColor },
+                        ticks: {
+                            color: theme.textColor,
+                            callback: function(value) { return value + "%"; }
+                        }
+                    },
+                    y: {
+                        grid: { display: false },
+                        ticks: { color: theme.textColor }
                     }
                 }
             }
